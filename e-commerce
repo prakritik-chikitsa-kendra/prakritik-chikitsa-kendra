@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Prakritik Chikitsa Kendra</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      background: #f0f0f0;
+    }
+    header {
+      background: #4CAF50;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      font-size: 2rem;
+      font-weight: bold;
+      position: relative;
+    }
+    #cart-count {
+      background: red;
+      border-radius: 50%;
+      padding: 5px 10px;
+      position: absolute;
+      top: 10px;
+      right: 20px;
+    }
+    nav {
+      background: #333;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 1rem;
+      gap: 1rem;
+    }
+    nav button {
+      background: none;
+      color: white;
+      border: none;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    nav button:hover {
+      color: #4CAF50;
+    }
+    #searchBar {
+      padding: 10px;
+      font-size: 1rem;
+      border-radius: 5px;
+      border: none;
+      width: 200px;
+      outline: none;
+    }
+    .container {
+      padding: 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 2rem;
+    }
+    .product {
+      background: white;
+      padding: 1rem;
+      border-radius: 10px;
+      box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+      text-align: center;
+      transition: transform 0.3s;
+    }
+    .product:hover {
+      transform: translateY(-10px);
+    }
+    .product img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+    .product h3 {
+      margin: 0.5rem 0;
+    }
+    .product p {
+      color: #555;
+    }
+    .stars {
+      color: gold;
+      margin-bottom: 5px;
+    }
+    .btn {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .btn:hover {
+      background: #45a049;
+    }
+    footer {
+      background: #333;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+      margin-top: 2rem;
+    }
+    .cart-page {
+      padding: 2rem;
+    }
+    .cart-item {
+      background: white;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 10px;
+      box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .hidden {
+      display: none;
+    }
+    .quantity {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .quantity button {
+      background: #4CAF50;
+      border: none;
+      color: white;
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .total {
+      font-size: 1.5rem;
+      margin-top: 2rem;
+      text-align: center;
+    }
+    @media(max-width: 600px){
+      nav {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  Prakritik Chikitsa Kendra
+  <div id="cart-count">0</div>
+</header>
+
+<nav>
+  <button onclick="showCategory('All')">All</button>
+  <button onclick="showCategory('Oil')">Oil</button>
+  <button onclick="showCategory('Medicine')">Medicine</button>
+  <button onclick="showCategory('Supplement')">Extra Supplement</button>
+  <input type="text" id="searchBar" placeholder="Search..." oninput="searchProducts()">
+  <button onclick="showCart()">Cart</button>
+</nav>
+
+<section class="container" id="products">
+  <!-- Products inserted by JavaScript -->
+</section>
+
+<section class="cart-page hidden" id="cart-page">
+  <!-- Cart Items -->
+</section>
+
+<div class="total hidden" id="cart-total">
+  Total: ₹0
+  <br><br>
+  <button class="btn" onclick="checkout()">Checkout</button>
+</div>
+
+<footer>
+  &copy; 2025 Prakritik Chikitsa Kendra
+</footer>
+
+<script>
+const products = [
+  {name: "Almond Oil", price: randomPrice(), category: "Oil", img: "https://images.unsplash.com/photo-1608471576511-233c24817c70", rating: 4},
+  {name: "Mustard Oil", price: randomPrice(), category: "Oil", img: "https://images.unsplash.com/photo-1587300003388-59208cc962cb", rating: 5},
+  {name: "Coconut Oil", price: randomPrice(), category: "Oil", img: "https://images.unsplash.com/photo-1600891964599-f61ba0e24092", rating: 4},
+  {name: "Pain Relief", price: randomPrice(), category: "Medicine", img: "https://images.unsplash.com/photo-1616361149928-843c1bfae5a2", rating: 3},
+  {name: "Cough Syrup", price: randomPrice(), category: "Medicine", img: "https://images.unsplash.com/photo-1588776814546-ec47e15aab3c", rating: 4},
+  {name: "Booster Tablets", price: randomPrice(), category: "Medicine", img: "https://images.unsplash.com/photo-1588776814546-ec47e15aab3c", rating: 5},
+  {name: "Herbal Capsules", price: randomPrice(), category: "Medicine", img: "https://images.unsplash.com/photo-1606761568499-6f7eab841979", rating: 4},
+  {name: "Vitamin D", price: randomPrice(), category: "Supplement", img: "https://images.unsplash.com/photo-1576092768069-7fa68f6813a0", rating: 5},
+  {name: "Protein Powder", price: randomPrice(), category: "Supplement", img: "https://images.unsplash.com/photo-1608464064778-3606be5d6be0", rating: 4},
+  {name: "Wheatgrass", price: randomPrice(), category: "Supplement", img: "https://images.unsplash.com/photo-1578496781985-495c1f8c95e1", rating: 5},
+];
+
+let cart = [];
+let filtered = products;
+
+function randomPrice() {
+  return Math.floor(Math.random() * 500) + 100;
+}
+
+function displayProducts(list) {
+  const container = document.getElementById('products');
+  container.innerHTML = "";
+  list.forEach((p, i) => {
+    container.innerHTML += `
+      <div class="product">
+        <img src="${p.img}?auto=format&fit=crop&w=400&q=80" alt="${p.name}">
+        <h3>${p.name}</h3>
+        <div class="stars">${"★".repeat(p.rating)}${"☆".repeat(5 - p.rating)}</div>
+        <p>₹${p.price}</p>
+        <button class="btn" onclick="addToCart(${i})">Add to Cart</button>
+      </div>
+    `;
+  });
+}
+
+function addToCart(index) {
+  let item = filtered[index];
+  let found = cart.find(c => c.name === item.name);
+  if (found) {
+    found.qty++;
+  } else {
+    cart.push({...item, qty: 1});
+  }
+  updateCartCount();
+  alert(item.name + " added to cart!");
+}
+
+function updateCartCount() {
+  document.getElementById('cart-count').innerText = cart.reduce((sum, item) => sum + item.qty, 0);
+}
+
+function showCategory(category) {
+  document.getElementById('products').classList.remove('hidden');
+  document.getElementById('cart-page').classList.add('hidden');
+  document.getElementById('cart-total').classList.add('hidden');
+  if(category === 'All') {
+    filtered = products;
+  } else {
+    filtered = products.filter(p => p.category === category);
+  }
+  displayProducts(filtered);
+}
+
+function searchProducts() {
+  let searchTerm = document.getElementById('searchBar').value.toLowerCase();
+  let result = filtered.filter(p => p.name.toLowerCase().includes(searchTerm));
+  displayProducts(result);
+}
+
+function showCart() {
+  const cartPage = document.getElementById('cart-page');
+  cartPage.innerHTML = "";
+  document.getElementById('products').classList.add('hidden');
+  document.getElementById('cart-page').classList.remove('hidden');
+  document.getElementById('cart-total').classList.remove('hidden');
+  
+  let total = 0;
+  cart.forEach((item, i) => {
+    total += item.price * item.qty;
+    cartPage.innerHTML += `
+      <div class="cart-item">
+        <div>${item.name}<br>₹${item.price} x ${item.qty}</div>
+        <div class="quantity">
+          <button onclick="changeQty(${i}, -1)">-</button>
+          <span>${item.qty}</span>
+          <button onclick="changeQty(${i}, 1)">+</button>
+        </div>
+      </div>
+    `;
+  });
+  document.getElementById('cart-total').innerHTML = `Total: ₹${total}
+  <br><br>
+  <button class="btn" onclick="checkout()">Checkout</button>`;
+}
+
+function changeQty(index, delta) {
+  cart[index].qty += delta;
+  if (cart[index].qty <= 0) {
+    cart.splice(index, 1);
+  }
+  updateCartCount();
+  showCart();
+}
+
+function checkout() {
+  if (cart.length === 0) {
+    alert("Your cart is empty!");
+    return;
+  }
+  alert("Thank you for shopping at Prakritik Chikitsa Kendra! 🙏");
+  cart = [];
+  updateCartCount();
+  showCategory('All');
+}
+
+displayProducts(products);
+</script>
+
+</body>
+</html>
